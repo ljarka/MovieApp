@@ -2,6 +2,7 @@ package com.github.ljarka.movieapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,6 +31,7 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
         runOnUiThread(() -> {
             Stream.of(result.getItems()).forEach(movieListingItem -> {
                 Log.d("result", "id " + movieListingItem.getImdbID());
+
             });
         });
     }
