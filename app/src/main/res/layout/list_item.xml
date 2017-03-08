@@ -15,18 +15,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <TextView
+            android:id="@+id/title_and_year"
             android:padding="8dp"
             android:textStyle="bold"
-            android:id="@+id/title_and_year"
             android:textSize="24sp"
             tools:text="Titanic (1997)"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/type"
             android:padding="8dp"
             android:textSize="16sp"
-            android:id="@+id/type"
             tools:text="type: film"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

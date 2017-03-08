@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 
 import nucleus.presenter.Presenter;
 
@@ -20,9 +21,9 @@ public class ListingPresenter extends Presenter<ListingActivity> {
                 try {
                     String result = getData(title);
                     SearchResult searchResult = new Gson().fromJson(result, SearchResult.class);
-                    getView().setDataOnUiThread(searchResult);
+                    getView().setDataOnUiThread(searchResult, false);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    getView().setDataOnUiThread(null, true);
                 }
             }
         }.start();
@@ -32,6 +33,7 @@ public class ListingPresenter extends Presenter<ListingActivity> {
         String stringUrl = "https://www.omdbapi.com/?s=" + title;
         URL url = new URL(stringUrl);
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        urlConnection.setConnectTimeout(3000);
         InputStream inputStream = urlConnection.getInputStream();
         return convertStreamToString(inputStream);
     }
