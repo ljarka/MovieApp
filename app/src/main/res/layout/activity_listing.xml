@@ -29,6 +29,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/no_internet" />
+
+        <FrameLayout
+            android:id="@+id/no_results"
+            android:background="@android:color/holo_red_light"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:textColor="@android:color/white"
+                android:layout_gravity="center"
+                android:textSize="24sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="O nieee !!! Nic nie znalazłem" />
+        </FrameLayout>
     </ViewFlipper>
 
 </FrameLayout>
