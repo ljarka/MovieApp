@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -25,7 +26,7 @@ import nucleus.factory.RequiresPresenter;
 import nucleus.view.NucleusAppCompatActivity;
 
 @RequiresPresenter(ListingPresenter.class)
-public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> {
+public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> implements CurrentItemListener, ShowOrHideCounter {
 
     private static final String SEARCH_TITLE = "search_title";
     private static final String SEARCH_YEAR = "search_year";
@@ -46,6 +47,11 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
     @BindView(R.id.no_results)
     FrameLayout noResults;
 
+    @BindView(R.id.counter)
+    TextView counter;
+
+    private EndlessScrollListener endlessScrollListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +71,10 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
         recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager));
+        endlessScrollListener = new EndlessScrollListener(layoutManager, getPresenter());
+        recyclerView.addOnScrollListener(endlessScrollListener);
+        endlessScrollListener.setCurrentItemListener(this);
+        endlessScrollListener.setShowOrHideCounter(this);
 
         getPresenter().getDataAsync(title, year, type)
                 .subscribeOn(io())
@@ -73,13 +82,14 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
                 .subscribe(this::success, this::error);
     }
 
-    @OnClick(R.id.no_internet_image_view)
-    public void onNoInternetImageViewClick(View view) {
-        Toast.makeText(this, "Kliknąłem no internet image view", Toast.LENGTH_LONG).show();
-    }
-
     private void error(Throwable throwable) {
         viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(noInternetImage));
+    }
+
+    public void appendItems(SearchResult searchResult) {
+        adapter.addItems(searchResult.getItems());
+        endlessScrollListener.setTotalItemsNumber(Integer.parseInt(searchResult.getTotalResults()));
+
     }
 
     private void success(SearchResult searchResult) {
@@ -88,6 +98,7 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
         } else {
             viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(recyclerView));
             adapter.setItems(searchResult.getItems());
+            endlessScrollListener.setTotalItemsNumber(Integer.parseInt(searchResult.getTotalResults()));
         }
     }
 
@@ -97,5 +108,21 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
         intent.putExtra(SEARCH_YEAR, year);
         intent.putExtra(SEARCH_TYPE, type);
         return intent;
+    }
+
+    @Override
+    public void onNewCurrentItem(int currentItem, int totalItemsCount) {
+        counter.setText(currentItem + "/" + totalItemsCount);
+    }
+
+    @Override
+    public void showCounter() {
+        counter.setVisibility(View.VISIBLE);
+        counter.animate().translationX(0).start();
+    }
+
+    @Override
+    public void hideCounter() {
+        counter.animate().translationX(counter.getWidth() * 2).start();
     }
 }

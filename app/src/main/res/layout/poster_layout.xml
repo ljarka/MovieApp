@@ -4,7 +4,6 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:layout_margin="10dp"
         android:id="@+id/search_poster"
         android:layout_width="wrap_content"
         android:layout_height="200dp" />
