@@ -1,4 +1,4 @@
-package com.github.ljarka.movieapp;
+package com.github.ljarka.movieapp.listing;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -1,15 +1,21 @@
-package com.github.ljarka.movieapp;
+package com.github.ljarka.movieapp.search;
 
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.RadioGroup;
+
+import com.github.ljarka.movieapp.R;
+import com.github.ljarka.movieapp.RetrofitProvider;
+import com.github.ljarka.movieapp.listing.ListingActivity;
+import com.github.ljarka.movieapp.listing.MovieListingItem;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -19,6 +25,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.functions.Function;
+import retrofit2.Retrofit;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -47,6 +56,9 @@ public class SearchActivity extends AppCompatActivity {
     @BindView(R.id.radio_group)
     RadioGroup radioGroup;
 
+    @BindView(R.id.poster_header)
+    RecyclerView posterHeaderRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +71,23 @@ public class SearchActivity extends AppCompatActivity {
         numberPicker.setMaxValue(year);
         numberPicker.setValue(year);
         numberPicker.setWrapSelectorWheel(true);
+
+        PosterRecyclerViewAdapter adapter = new PosterRecyclerViewAdapter();
+        posterHeaderRecyclerView.setAdapter(adapter);
+        posterHeaderRecyclerView.setLayoutManager(new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false));
+
+        RetrofitProvider retrofitProvider = (RetrofitProvider) getApplication();
+        Retrofit retrofit = retrofitProvider.provideRetrofit();
+        SearchService searchService = retrofit.create(SearchService.class);
+        searchService.search("a*", "2016", null)
+                .flatMap(searchResult -> Observable.fromIterable(searchResult.getItems()))
+                .map(new Function<MovieListingItem, String>() {
+                    @Override
+                    public String apply(MovieListingItem movieListingItem) throws Exception {
+                        return movieListingItem.getPoster();
+                    }
+                });
     }
 
     @OnCheckedChanged(R.id.type_checkbox)

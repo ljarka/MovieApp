@@ -1,4 +1,4 @@
-package com.github.ljarka.movieapp;
+package com.github.ljarka.movieapp.search;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;

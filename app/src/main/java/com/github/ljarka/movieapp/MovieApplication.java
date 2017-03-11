@@ -1,26 +1,26 @@
 package com.github.ljarka.movieapp;
 
-import io.reactivex.Observable;
-import nucleus.presenter.Presenter;
+import android.app.Application;
+
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ListingPresenter extends Presenter<ListingActivity> {
-
+public class MovieApplication extends Application implements RetrofitProvider {
     private Retrofit retrofit;
 
-    public ListingPresenter() {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
         retrofit = new Retrofit.Builder().addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl("https://www.omdbapi.com")
                 .build();
     }
 
-    public Observable<SearchResult> getDataAsync(String title, int year, String type) {
-
-        String stringYear = year == ListingActivity.NO_YEAR_SELECTED ? null : String.valueOf(year);
-        return retrofit.create(SearchService.class).search(title,
-                stringYear, type);
+    @Override
+    public Retrofit provideRetrofit() {
+        return retrofit;
     }
 }

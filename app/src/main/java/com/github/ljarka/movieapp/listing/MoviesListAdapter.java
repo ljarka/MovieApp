@@ -1,7 +1,6 @@
-package com.github.ljarka.movieapp;
+package com.github.ljarka.movieapp.listing;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.github.ljarka.movieapp.R;
 
 import java.util.Collections;
 import java.util.List;

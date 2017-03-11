@@ -1,5 +1,6 @@
-package com.github.ljarka.movieapp;
+package com.github.ljarka.movieapp.search;
 
+import com.github.ljarka.movieapp.listing.MovieListingItem;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

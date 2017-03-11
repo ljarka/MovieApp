@@ -1,4 +1,4 @@
-package com.github.ljarka.movieapp;
+package com.github.ljarka.movieapp.listing;
 
 import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
 import static io.reactivex.schedulers.Schedulers.io;
@@ -12,6 +12,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import com.github.ljarka.movieapp.R;
+import com.github.ljarka.movieapp.RetrofitProvider;
+import com.github.ljarka.movieapp.search.SearchResult;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,6 +50,11 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listing);
         ButterKnife.bind(this);
+
+        if (savedInstanceState == null) {
+            RetrofitProvider retrofitProvider = (RetrofitProvider) getApplication();
+            getPresenter().setRetrofit(retrofitProvider.provideRetrofit());
+        }
 
         String title = getIntent().getStringExtra(SEARCH_TITLE);
         int year = getIntent().getIntExtra(SEARCH_YEAR, NO_YEAR_SELECTED);
