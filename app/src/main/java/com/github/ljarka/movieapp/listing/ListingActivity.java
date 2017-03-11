@@ -6,6 +6,7 @@ import static io.reactivex.schedulers.Schedulers.io;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -62,6 +63,9 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
 
         adapter = new MoviesListAdapter();
         recyclerView.setAdapter(adapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager));
 
         getPresenter().getDataAsync(title, year, type)
                 .subscribeOn(io())
