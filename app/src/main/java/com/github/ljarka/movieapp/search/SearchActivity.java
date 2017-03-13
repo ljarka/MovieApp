@@ -107,7 +107,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void error(Throwable throwable) {
-
+        // nop
     }
 
     @OnCheckedChanged(R.id.type_checkbox)

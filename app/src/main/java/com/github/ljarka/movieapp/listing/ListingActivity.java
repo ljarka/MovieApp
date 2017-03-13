@@ -6,6 +6,7 @@ import static io.reactivex.schedulers.Schedulers.io;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -50,6 +51,9 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
     @BindView(R.id.counter)
     TextView counter;
 
+    @BindView(R.id.swipe_refresh)
+    SwipeRefreshLayout swipeRefreshLayout;
+
     private EndlessScrollListener endlessScrollListener;
 
     @Override
@@ -76,6 +80,17 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
         endlessScrollListener.setCurrentItemListener(this);
         endlessScrollListener.setShowOrHideCounter(this);
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                startLoading(title, year, type);
+            }
+        });
+
+        startLoading(title, year, type);
+    }
+
+    private void startLoading(String title, int year, String type) {
         getPresenter().getDataAsync(title, year, type)
                 .subscribeOn(io())
                 .observeOn(mainThread())
@@ -83,20 +98,21 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
     }
 
     private void error(Throwable throwable) {
+        swipeRefreshLayout.setRefreshing(false);
         viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(noInternetImage));
     }
 
     public void appendItems(SearchResult searchResult) {
         adapter.addItems(searchResult.getItems());
         endlessScrollListener.setTotalItemsNumber(Integer.parseInt(searchResult.getTotalResults()));
-
     }
 
     private void success(SearchResult searchResult) {
+        swipeRefreshLayout.setRefreshing(false);
         if ("false".equalsIgnoreCase(searchResult.getResponse())) {
             viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(noResults));
         } else {
-            viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(recyclerView));
+            viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(swipeRefreshLayout));
             adapter.setItems(searchResult.getItems());
             endlessScrollListener.setTotalItemsNumber(Integer.parseInt(searchResult.getTotalResults()));
         }
