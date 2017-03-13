@@ -7,5 +7,5 @@ import retrofit2.http.Query;
 
 public interface DetailService {
     @GET("/")
-    Observable<MovieItem> getDetailInfo(@Query("imdbID") String id);
+    Observable<MovieItem> getDetailInfo(@Query("i") String id);
 }

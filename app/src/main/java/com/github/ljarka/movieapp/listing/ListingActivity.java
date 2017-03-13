@@ -18,6 +18,7 @@ import android.widget.ViewFlipper;
 
 import com.github.ljarka.movieapp.R;
 import com.github.ljarka.movieapp.RetrofitProvider;
+import com.github.ljarka.movieapp.detail.DetailActivity;
 import com.github.ljarka.movieapp.search.SearchResult;
 
 import butterknife.BindView;
@@ -27,7 +28,7 @@ import nucleus.factory.RequiresPresenter;
 import nucleus.view.NucleusAppCompatActivity;
 
 @RequiresPresenter(ListingPresenter.class)
-public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> implements CurrentItemListener, ShowOrHideCounter {
+public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> implements CurrentItemListener, ShowOrHideCounter, OnMovieItemClickListener {
 
     private static final String SEARCH_TITLE = "search_title";
     private static final String SEARCH_YEAR = "search_year";
@@ -72,6 +73,7 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
         String type = getIntent().getStringExtra(SEARCH_TYPE);
 
         adapter = new MoviesListAdapter();
+        adapter.setOnMovieItemClickListener(this);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
@@ -140,5 +142,10 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
     @Override
     public void hideCounter() {
         counter.animate().translationX(counter.getWidth() * 2).start();
+    }
+
+    @Override
+    public void onMovieItemClick(String imdbID) {
+        startActivity(DetailActivity.createIntent(this, imdbID));
     }
 }

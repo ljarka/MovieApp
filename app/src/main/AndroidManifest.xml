@@ -3,6 +3,7 @@
     package="com.github.ljarka.movieapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".MovieApplication"
         android:allowBackup="true"
@@ -17,8 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".listing.ListingActivity">
-        </activity>
+        <activity android:name=".listing.ListingActivity"></activity>
+        <activity android:name=".detail.DetailActivity"></activity>
     </application>
 
 </manifest>
