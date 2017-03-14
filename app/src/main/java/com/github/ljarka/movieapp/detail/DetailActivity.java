@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.github.ljarka.movieapp.R;
 import com.github.ljarka.movieapp.RetrofitProvider;
+import com.github.ljarka.movieapp.detail.gallery.GalleryActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +42,7 @@ public class DetailActivity extends NucleusAppCompatActivity<DetailPresenter> {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::success, this::error);
+
     }
 
     @Override
@@ -52,6 +55,13 @@ public class DetailActivity extends NucleusAppCompatActivity<DetailPresenter> {
 
     private void success(MovieItem movieItem) {
         Glide.with(this).load(movieItem.getPoster()).into(poster);
+
+        poster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GalleryActivity.startActivity(DetailActivity.this, movieItem.getPoster(), poster);
+            }
+        });
     }
 
     private void error(Throwable throwable) {
