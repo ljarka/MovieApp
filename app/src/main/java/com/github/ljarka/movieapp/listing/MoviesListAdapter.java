@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.ljarka.movieapp.R;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 
 import org.w3c.dom.Text;
 
@@ -27,6 +29,7 @@ public class MoviesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private List<MovieListingItem> items = Collections.emptyList();
     private OnMovieItemClickListener onMovieItemClickListener;
+    private OnLikeButtonClickListener onLikeButtonClickListener;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -37,6 +40,10 @@ public class MoviesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
             return new MyViewHolder(layout);
         }
+    }
+
+    public void setOnLikeButtonClickListener(OnLikeButtonClickListener onLikeButtonClickListener) {
+        this.onLikeButtonClickListener = onLikeButtonClickListener;
     }
 
     public void setOnMovieItemClickListener(OnMovieItemClickListener onMovieItemClickListener) {
@@ -57,6 +64,21 @@ public class MoviesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     onMovieItemClickListener.onMovieItemClick(movieListingItem.getImdbID());
                 }
             });
+            myViewHolder.likeButton.setOnLikeListener(new OnLikeListener() {
+                @Override
+                public void liked(LikeButton likeButton) {
+                    if (onLikeButtonClickListener != null) {
+                        onLikeButtonClickListener.onLikeButtonClick(movieListingItem);
+                    }
+                }
+
+                @Override
+                public void unLiked(LikeButton likeButton) {
+                }
+            });
+
+
+
         } else {
             GamesViewHolder gamesViewHolder = (GamesViewHolder) holder;
             Glide.with(gamesViewHolder.poster.getContext())
@@ -106,7 +128,7 @@ public class MoviesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-
+        LikeButton likeButton;
         ImageView poster;
         TextView titleAndYear;
         TextView type;
@@ -116,6 +138,7 @@ public class MoviesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             poster = (ImageView) itemView.findViewById(R.id.poster);
             titleAndYear = (TextView) itemView.findViewById(R.id.title_and_year);
             type = (TextView) itemView.findViewById(R.id.type);
+            likeButton = (LikeButton) itemView.findViewById(R.id.star_button);
         }
     }
 }
