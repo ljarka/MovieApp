@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,20 +13,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.github.ljarka.movieapp.MovieApplication;
 import com.github.ljarka.movieapp.MovieDatabaseOpenHelper;
 import com.github.ljarka.movieapp.MovieTableContract;
 import com.github.ljarka.movieapp.R;
-import com.github.ljarka.movieapp.RetrofitProvider;
 import com.github.ljarka.movieapp.detail.DetailActivity;
 import com.github.ljarka.movieapp.search.SearchResult;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nucleus.factory.RequiresPresenter;
 import nucleus.view.NucleusAppCompatActivity;
-
-import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
-import static io.reactivex.schedulers.Schedulers.io;
+import retrofit2.Retrofit;
 
 @RequiresPresenter(ListingPresenter.class)
 public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> implements CurrentItemListener, ShowOrHideCounter, OnMovieItemClickListener, OnLikeButtonClickListener {
@@ -60,16 +59,19 @@ public class ListingActivity extends NucleusAppCompatActivity<ListingPresenter> 
     private EndlessScrollListener endlessScrollListener;
     private MovieDatabaseOpenHelper movieDatabaseOpenHelper;
 
+    @Inject
+    Retrofit retrofit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listing);
         ButterKnife.bind(this);
+        MovieApplication movieApplication = (MovieApplication) getApplication();
+        movieApplication.getAppComponent().inject(this);
+
         movieDatabaseOpenHelper = new MovieDatabaseOpenHelper(this);
-        if (savedInstanceState == null) {
-            RetrofitProvider retrofitProvider = (RetrofitProvider) getApplication();
-            getPresenter().setRetrofit(retrofitProvider.provideRetrofit());
-        }
+        getPresenter().setRetrofit(retrofit);
 
         String title = getIntent().getStringExtra(SEARCH_TITLE);
         int year = getIntent().getIntExtra(SEARCH_YEAR, NO_YEAR_SELECTED);

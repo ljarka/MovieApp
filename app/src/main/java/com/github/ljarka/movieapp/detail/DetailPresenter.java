@@ -1,10 +1,5 @@
 package com.github.ljarka.movieapp.detail;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-
-import com.github.ljarka.movieapp.RetrofitProvider;
-
 import io.reactivex.Observable;
 import nucleus.presenter.Presenter;
 import retrofit2.Retrofit;
